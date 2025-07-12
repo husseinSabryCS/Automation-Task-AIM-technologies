@@ -11,63 +11,75 @@ public class LoginPage {
     WebDriver driver;
     WebDriverWait wait;
 
-
-
-    // locators
-    private By loginPageLink= By.className("login");
+    // Locators
+    private By loginPageLink = By.className("login");
     private By email = By.id("email");
     private By password = By.id("passwd");
     private By loginButton = By.id("SubmitLogin");
     private By dashboardHeader = By.id("header_logo");
-    private By usernameErrorMessage = By.xpath("//div[@class='alert alert-danger']");
-    private By passwordMessage = By.xpath("//div[@class='alert alert-danger']");
+    private By errorMessage = By.xpath("//div[@class='alert alert-danger']");
 
     // Constructor
     public LoginPage(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
-public void  GoToLoginPage(){
-        wait.until(ExpectedConditions.elementToBeClickable(loginPageLink));
-        driver.findElement(loginPageLink).click();
-}
-    public void EnterUserName(String UserName) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(email));
-        driver.findElement(email).sendKeys(UserName);
+
+    // Helper Methods
+    private void waitAndType(By locator, String text) {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        driver.findElement(locator).clear();
+        driver.findElement(locator).sendKeys(text);
     }
 
-    public void EnterPassword(String Password) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(password));
-        driver.findElement(password).sendKeys(Password);
+    private void waitAndClick(By locator) {
+        wait.until(ExpectedConditions.elementToBeClickable(locator));
+        driver.findElement(locator).click();
+    }
+
+    private boolean isElementVisible(By locator) {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        return driver.findElement(locator).isDisplayed();
+    }
+
+    // Actions
+    public void goToLoginPage() {
+        waitAndClick(loginPageLink);
+    }
+
+    public void enterUsername(String username) {
+        waitAndType(email, username);
+    }
+
+    public void enterPassword(String password) {
+        waitAndType(this.password, password);
     }
 
     public void clickLogin() {
-        wait.until(ExpectedConditions.elementToBeClickable(loginButton));
-        driver.findElement(loginButton).click();
+        waitAndClick(loginButton);
     }
 
-    public void login(String UserName,String Password) {
-        GoToLoginPage();
-        EnterUserName(UserName);
-        EnterPassword(Password);
+    public void login(String username, String password) {
+        goToLoginPage();
+        enterUsername(username);
+        enterPassword(password);
         clickLogin();
     }
 
+    // Verifications
     public boolean isLoginSuccessful() {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(dashboardHeader));
-        return driver.findElement(dashboardHeader).isDisplayed();
+        return isElementVisible(dashboardHeader);
     }
-    public boolean usernameReqired() {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(usernameErrorMessage));
-        return driver.findElement(usernameErrorMessage).isDisplayed();
-    }
-    public boolean passwordReqired() {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(passwordMessage));
-        return driver.findElement(passwordMessage).isDisplayed();
-    }
-    public boolean IsInvalidCredentials(){
-        wait.until(ExpectedConditions.visibilityOfElementLocated(passwordMessage));
-        return driver.findElement(passwordMessage).isDisplayed();
 
+    public boolean isUsernameRequired() {
+        return isElementVisible(errorMessage);
+    }
+
+    public boolean isPasswordRequired() {
+        return isElementVisible(errorMessage);
+    }
+
+    public boolean isInvalidCredentials() {
+        return isElementVisible(errorMessage);
     }
 }

@@ -7,8 +7,9 @@ import pages.LoginPage;
 public class LoginTest {
     WebDriver driver;
     LoginPage loginPage;
-    private String UserName = "Admin";
-    private String Password = "admin123";
+
+    private final String username = "Admin";
+    private final String password = "admin123";
 
     @BeforeMethod
     public void setUp() {
@@ -16,31 +17,34 @@ public class LoginTest {
         driver.manage().window().maximize();
         driver.get("http://www.automationpractice.pl/");
         loginPage = new LoginPage(driver);
+    }
 
-    }
     @Test
-    public void login (){
-        loginPage.login(UserName, Password);
-        Assert.assertTrue(loginPage.isLoginSuccessful());
+    public void testLoginWithValidCredentials() {
+        loginPage.login(username, password);
+        Assert.assertTrue(loginPage.isLoginSuccessful(), "Login should be successful with valid credentials.");
     }
+
     @Test
-    public void login_without_username (){
-        loginPage.login("", Password);
-        Assert.assertTrue(loginPage.usernameReqired());
+    public void testLoginWithoutUsername() {
+        loginPage.login("", password);
+        Assert.assertTrue(loginPage.isUsernameRequired(), "Username error message should be displayed.");
     }
+
     @Test
-    public void login_without_password (){
-        loginPage.login(UserName, "");
-        Assert.assertTrue(loginPage.passwordReqired());
+    public void testLoginWithoutPassword() {
+        loginPage.login(username, "");
+        Assert.assertTrue(loginPage.isPasswordRequired(), "Password error message should be displayed.");
     }
+
     @Test
-    public void login_with_Invalid_credentials(){
-        loginPage.login("invaildUserName","4387969D");
-        Assert.assertTrue(loginPage.IsInvalidCredentials());
+    public void testLoginWithInvalidCredentials() {
+        loginPage.login("invalidUser", "wrongPass");
+        Assert.assertTrue(loginPage.isInvalidCredentials(), "Invalid credentials error message should be displayed.");
     }
-@AfterMethod
-    public void exit(){
+
+    @AfterMethod
+    public void tearDown() {
         driver.quit();
-}
-
+    }
 }

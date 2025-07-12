@@ -3,9 +3,7 @@ package pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.*;
 
 import java.time.Duration;
 
@@ -17,94 +15,105 @@ public class SignInPage {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
-//    locators
-    private By signupPageLink= By.className("login");
-    private By email = By.id("email_create");
-    private By createAccount =By.id("SubmitCreate");
-    private By Gender = By.id("id_gender1");
-    private By FirstName = By.id("customer_firstname");
-    private By LastName = By.id("customer_lastname");
-    private By Password = By.id("passwd");
-    private By days = By.id("days");
-    private By months=By.id("months");
-    private By years =By.id("years");
-    private By checkbox =By.id("uniform-newsletter");
-    private By Register = By.id("submitAccount");
 
+    // Locators
+    private By signupPageLink = By.className("login");
+    private By emailInput = By.id("email_create");
+    private By createAccountButton = By.id("SubmitCreate");
+    private By genderRadio = By.id("id_gender1");
+    private By firstNameInput = By.id("customer_firstname");
+    private By lastNameInput = By.id("customer_lastname");
+    private By passwordInput = By.id("passwd");
+    private By daysDropdown = By.id("days");
+    private By monthsDropdown = By.id("months");
+    private By yearsDropdown = By.id("years");
+    private By newsletterCheckbox = By.id("uniform-newsletter");
+    private By registerButton = By.id("submitAccount");
 
-
-
-    public void  GoToSignupPage(){
-        wait.until(ExpectedConditions.elementToBeClickable(signupPageLink));
-        driver.findElement(signupPageLink).click();
-    }
-    public void typeEmail(String email){
-        wait.until(ExpectedConditions.visibilityOfElementLocated(this.email));
-        driver.findElement(this.email).sendKeys(email);
-    }
-    public void ClickCreateAccount(){
-        wait.until(ExpectedConditions.elementToBeClickable(createAccount));
-        driver.findElement(createAccount).click();
-    }
-    public void  SelectGender(){
-        wait.until(ExpectedConditions.elementToBeClickable(Gender));
-        driver.findElement(Gender).click();
-    }
-    public void EnterFristName (String firstName){
-        wait.until(ExpectedConditions.elementToBeClickable(FirstName));
-        driver.findElement(FirstName).sendKeys(firstName);
-    }
-    public void EnterLastName(String lastName){
-        wait.until(ExpectedConditions.elementToBeClickable(LastName));
-        driver.findElement(LastName).sendKeys(lastName);
-    }
-    public void EnterPassword(String password){
-        wait.until(ExpectedConditions.elementToBeClickable(Password));
-        driver.findElement(Password).sendKeys(password);
+    // Helper Methods
+    private void waitAndClick(By locator) {
+        wait.until(ExpectedConditions.elementToBeClickable(locator));
+        driver.findElement(locator).click();
     }
 
-    public void SelectDay(){
-        WebElement dropdown = driver.findElement(days);
+    private void waitAndType(By locator, String text) {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        driver.findElement(locator).clear();
+        driver.findElement(locator).sendKeys(text);
+    }
+
+    private void selectDropdownByValue(By locator, String value) {
+        WebElement dropdown = driver.findElement(locator);
         Select select = new Select(dropdown);
-        select.selectByValue("1");
+        select.selectByValue(value);
     }
-    public void Selectmonth(){
-        WebElement dropdown = driver.findElement(months);
-        Select select = new Select(dropdown);
-        select.selectByValue("1");
-    }
-    public void Selectyear(){
-        WebElement dropdown = driver.findElement(years);
-        Select select = new Select(dropdown);
-        select.selectByValue("2025");
-    }
-    public void SelectCheckbox(){
-        wait.until(ExpectedConditions.elementToBeClickable(checkbox));
-        driver.findElement(checkbox).click();
-    }
-    public void ClickRegister(){
-        wait.until(ExpectedConditions.elementToBeClickable(Register));
-        driver.findElement(Register).click();
-    }
-    public String isSignUpSuccessful() {
-        String URL=  driver.getCurrentUrl();
 
-        return URL;
+    // Actions
+    public void goToSignupPage() {
+        waitAndClick(signupPageLink);
     }
-    public void SignUp(String email,String firstName,String lastName ,String password){
-        GoToSignupPage();
+
+    public void typeEmail(String email) {
+        waitAndType(emailInput, email);
+    }
+
+    public void clickCreateAccount() {
+        waitAndClick(createAccountButton);
+    }
+
+    public void selectGender() {
+        waitAndClick(genderRadio);
+    }
+
+    public void enterFirstName(String firstName) {
+        waitAndType(firstNameInput, firstName);
+    }
+
+    public void enterLastName(String lastName) {
+        waitAndType(lastNameInput, lastName);
+    }
+
+    public void enterPassword(String password) {
+        waitAndType(passwordInput, password);
+    }
+
+    public void selectDay(String day) {
+        selectDropdownByValue(daysDropdown, day);
+    }
+
+    public void selectMonth(String month) {
+        selectDropdownByValue(monthsDropdown, month);
+    }
+
+    public void selectYear(String year) {
+        selectDropdownByValue(yearsDropdown, year);
+    }
+
+    public void selectNewsletterCheckbox() {
+        waitAndClick(newsletterCheckbox);
+    }
+
+    public void clickRegister() {
+        waitAndClick(registerButton);
+    }
+
+    public String getCurrentUrl() {
+        return driver.getCurrentUrl();
+    }
+
+    // Main sign up function
+    public void signUp(String email, String firstName, String lastName, String password) {
+        goToSignupPage();
         typeEmail(email);
-        ClickCreateAccount();
-        SelectGender();
-        EnterFristName (firstName);
-        EnterLastName(lastName);
-        EnterPassword(password);
-        SelectDay();
-        Selectmonth();
-        Selectyear();
-        SelectCheckbox();
-        ClickRegister();
+        clickCreateAccount();
+        selectGender();
+        enterFirstName(firstName);
+        enterLastName(lastName);
+        enterPassword(password);
+        selectDay("1");
+        selectMonth("1");
+        selectYear("2025");
+        selectNewsletterCheckbox();
+        clickRegister();
     }
-
 }
-
